@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>AgentConnectLibrary</RootNamespace>
+    <AssemblyName>AgentConnectLibrary</AssemblyName>
+    <Description>Typed C# client for the AgentConnect MCP server and REST API (Approved v9).</Description>
+    <Version>0.6.0</Version>
+    <IsPackable>false</IsPackable>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ModelContextProtocol" Version="2.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="AgentConnectLibrary.Tests" />
+  </ItemGroup>
+</Project>

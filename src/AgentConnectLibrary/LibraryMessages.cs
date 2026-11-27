@@ -19,4 +19,6 @@ internal static class LibraryMessages
     public const string Unreadable = "The response could not be read.";
 
     public const string BadTimeout = "The timeout must be greater than zero.";
+
+    public const string BadPathSegment = "A path parameter must be exactly one URL segment. \".\", \"..\", and empty are not sent.";
 }

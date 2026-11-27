@@ -3,6 +3,7 @@ namespace AgentConnectLibrary;
 /// <summary>
 /// The 33 AgentConnect v9 REST endpoints. Each method calls only the REST API.
 /// The server enforces roles, validation, and paging. This surface does not.
+/// A path parameter of <c>.</c>, <c>..</c>, or empty throws <see cref="ArgumentException"/> and sends nothing, because those values cannot stay one URL segment.
 /// </summary>
 public sealed class AgentConnectRest
 {

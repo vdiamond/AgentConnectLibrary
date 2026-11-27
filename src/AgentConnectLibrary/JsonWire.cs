@@ -225,6 +225,16 @@ internal static class JsonWire
 
     public static Uri BuildUri(string baseUrl, IReadOnlyList<string> segments, IReadOnlyList<KeyValuePair<string, string>>? query)
     {
+        // "." and ".." are removed by System.Uri, and an empty segment collapses into the parent path.
+        // Either one would send this call to a different AgentConnect route.
+        foreach (var segment in segments)
+        {
+            if (segment.Length == 0 || segment == "." || segment == "..")
+            {
+                throw new ArgumentException(LibraryMessages.BadPathSegment);
+            }
+        }
+
         var builder = new StringBuilder();
         builder.Append(baseUrl.TrimEnd('/'));
         foreach (var segment in segments)
@@ -249,10 +259,57 @@ internal static class JsonWire
             }
         }
 
-        return new Uri(builder.ToString(), UriKind.Absolute);
+        var uri = new Uri(builder.ToString(), UriKind.Absolute);
+        if (!PathKeepsSegments(baseUrl, segments, uri))
+        {
+            throw new ArgumentException(LibraryMessages.BadPathSegment);
+        }
+
+        return uri;
     }
 
     #region private
+
+    private static bool PathKeepsSegments(string baseUrl, IReadOnlyList<string> segments, Uri uri)
+    {
+        var actual = SplitPath(uri.GetComponents(UriComponents.Path, UriFormat.UriEscaped));
+        var basePath = new Uri(baseUrl, UriKind.Absolute).GetComponents(UriComponents.Path, UriFormat.UriEscaped);
+        var expected = SplitPath(basePath);
+        if (expected.Count + segments.Count != actual.Count)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < expected.Count; index++)
+        {
+            if (!string.Equals(expected[index], actual[index], StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        for (var index = 0; index < segments.Count; index++)
+        {
+            var escaped = Uri.EscapeDataString(segments[index]);
+            if (!string.Equals(escaped, actual[expected.Count + index], StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static List<string> SplitPath(string path)
+    {
+        var trimmed = path.Trim('/');
+        if (trimmed.Length == 0)
+        {
+            return [];
+        }
+
+        return [.. trimmed.Split('/')];
+    }
 
     private static string Where(IReadOnlyList<FilterCondition> where)
     {

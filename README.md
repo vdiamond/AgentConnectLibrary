@@ -2,6 +2,8 @@
 
 A .NET 10 class library that calls [AgentConnect](https://github.com/vdiamond/AgentConnect) Approved v9. It is a DLL. It is not a NuGet package.
 
+Guidance for Cursor agents is in [AGENTS.md](AGENTS.md).
+
 The library has two surfaces on one client:
 
 - `Mcp` has one async method for each of the 19 MCP tools.
